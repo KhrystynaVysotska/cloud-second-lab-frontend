@@ -1,14 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import TwoOptionsModal from "../../../common/presentation/components/modals/TwoOptionsModal";
+import { getDbLatestMeasurements } from "../../../measurements/api/measurementDbApi";
+import LatestMeasurementCardCarousel from "../../../measurements/presentation/components/LatestMeasurementCardCarousel";
+import RiversPageStyled from "../../../styles/rivers/pages/RiversPage.styled";
 import {
   getRivers,
   deleteRiverById,
 } from "../../business/middleware/riverMiddleware";
+import RiverCard from "../components/RiverCard";
+import RiverCardsStyled from "../../../styles/rivers/components/RiverCards.styled";
+import RiverAddCard from "../components/RiverAddCard";
+import RiverAddForm from "../components/forms/RiverAddForm";
 
 function RiversPage() {
   const dispatch = useDispatch();
   const { rivers } = useSelector((state) => state.rivers);
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [latestMeasurements, setLatestMeasurements] = useState([]);
   const [showModal, setShowModal] = useState({
     show: false,
     info: false,
@@ -24,6 +33,9 @@ function RiversPage() {
 
   useEffect(() => {
     dispatch(getRivers());
+    getDbLatestMeasurements()
+      .then(({ data }) => setLatestMeasurements(data))
+      .catch((err) => console.log(err));
   }, [dispatch]);
 
   const resetModal = () => {
@@ -67,12 +79,13 @@ function RiversPage() {
       .catch(onDeletionFailure);
   };
 
-  const deleteRiver = (name, id) => {
+  const deleteRiver = (e, name, id) => {
+    e.stopPropagation();
     setShowModal({
+      info: true,
       show: true,
       error: false,
       success: false,
-      info: true,
       question: "Бажаєте видалити річку " + name + "?",
       firstOption: "Скасувати",
       secondOption: "Видалити",
@@ -84,17 +97,21 @@ function RiversPage() {
 
   return (
     <>
-      <div>
-        {rivers.map((river, index) => {
-          return (
-            <React.Fragment key={index}>
-              <div>
-                <p>{river.name}</p>
-              </div>
-            </React.Fragment>
-          );
-        })}
-      </div>
+      <RiversPageStyled>
+        <LatestMeasurementCardCarousel measurements={latestMeasurements} />
+        <p className="header">Оберіть річку</p>
+        <RiverCardsStyled>
+          {rivers.map((river, index) => {
+            return (
+              <React.Fragment key={index}>
+                <RiverCard river={river} onDelete={deleteRiver} />
+              </React.Fragment>
+            );
+          })}
+          <RiverAddCard onClick={() => setShowAddForm(true)} />
+        </RiverCardsStyled>
+      </RiversPageStyled>
+      <RiverAddForm showAddForm={showAddForm} setShowAddForm={setShowAddForm} />
       <TwoOptionsModal
         show={showModal.show}
         showInfo={showModal.info}
