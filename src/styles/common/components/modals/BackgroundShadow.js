@@ -7,7 +7,7 @@ const BackgroundShadow = styled.div`
   height: 100vh;
   z-index: 9999;
   display: flex;
-  position: absolute;
+  position: fixed;
   transition: all 0.3s;
   -webkit-transition: all 0.3s;
   background: rgba(40, 43, 49, 0.8);
