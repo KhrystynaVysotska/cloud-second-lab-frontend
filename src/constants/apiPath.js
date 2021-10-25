@@ -8,3 +8,5 @@ export const FLOAT_SENSOR_PATH = "/float_sensor/";
 
 export const MEASUREMENT_POINT_PATH = "/measurement_point/";
 
+export const MEASUREMENT_LATEST_PATH = "/measurement_point/latest";
+
