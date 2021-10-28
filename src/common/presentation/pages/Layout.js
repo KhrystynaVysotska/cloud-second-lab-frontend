@@ -1,35 +1,27 @@
 import React from "react";
 import { Switch, Route } from "react-router-dom";
-import RiverPage from "../../../rivers/presentation/pages/RiversPage";
-import { RIVER_PATH } from "../../../constants/apiPath";
+import {
+  FLOAT_SENSOR_PATH,
+  MEASUREMENT_PATH,
+  MEASUREMENT_POINT_PATH,
+  RIVER_PATH,
+} from "../../../constants/apiPath";
+import MeasurementPage from "../../../measurements/presentation/pages/MeasurementPage";
+import MeasurementPointsPage from "../../../measurement_points/presentation/pages/MeasurementPointsPage";
+import RiversPage from "../../../rivers/presentation/pages/RiversPage";
 
 function Layout() {
   return (
     <Switch>
-      {/* <Route exact path="/">
-        <RiverPage />
-      </Route> */}
-      <Route exact path={RIVER_PATH}>
-        <RiverPage />
+      <Route exact path="/">
+        <RiversPage />
       </Route>
-      {/* <Route exact path={EDIT_MOTOR_PATH + "/:id"}>
-        <EditMotor />
+      <Route exact path={RIVER_PATH + ":id" + MEASUREMENT_POINT_PATH}>
+        <MeasurementPointsPage />
       </Route>
-      <Route exact path={MOTORS_PATH + "/:id"}>
-        <MotorPage />
+      <Route exact path={FLOAT_SENSOR_PATH + ":id" + MEASUREMENT_PATH}>
+        <MeasurementPage />
       </Route>
-      <Route exact path={MOTORS_PATH}>
-        <MotorsPage />
-      </Route>
-      <Route path={WORKERS_PATH}>
-        <Workers />
-      </Route>
-      <Route path={SETTINGS_PATH}>
-        <Settings />
-      </Route>
-      <Route path={NOTIFICATIONS_PATH}>
-        <Notifications />
-      </Route> */}
       <Route path="*">
         <div>404 Not found </div>
       </Route>
