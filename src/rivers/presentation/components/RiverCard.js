@@ -8,7 +8,7 @@ import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import RiverCardStyled from "../../../styles/rivers/components/RiverCard.styled";
 import RiverEditForm from "./forms/RiverEditForm";
 
-export default function RiverCard({ river, onDelete }) {
+export default function RiverCard({ river, onDelete, onClick }) {
   const [showEditForm, setShowEditForm] = React.useState(false);
 
   const editRiverHandler = (e) => {
@@ -18,7 +18,7 @@ export default function RiverCard({ river, onDelete }) {
 
   return (
     <>
-      <RiverCardStyled>
+      <RiverCardStyled onClick={() => onClick(river.id)}>
         <Card
           style={{
             borderRadius: "10px",

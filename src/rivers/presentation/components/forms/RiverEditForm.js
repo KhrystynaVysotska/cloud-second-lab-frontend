@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import RiverEditFormStyled from "../../../../styles/rivers/components/forms/RiverEditForm.styled";
 import BackgroundShadow from "../../../../styles/common/components/modals/BackgroundShadow";
 import Input from "@mui/material/Input";
@@ -14,10 +14,17 @@ export default function RiverEditForm({
   setShowEditForm,
 }) {
   const dispatch = useDispatch();
-  const [name, setName] = React.useState(river.name);
-  const [image, setImage] = React.useState(river.image_url);
-  const [length, setLength] = React.useState(river.length_in_km);
-  const [basinArea, setBasinArea] = React.useState(river.basin_area_in_sq_km);
+  const [name, setName] = React.useState("");
+  const [image, setImage] = React.useState("");
+  const [length, setLength] = React.useState();
+  const [basinArea, setBasinArea] = React.useState();
+
+  useEffect(() => {
+    setName(river.name);
+    setImage(river.image_url);
+    setLength(river.length_in_km);
+    setBasinArea(river.basin_area_in_sq_km);
+  }, [river]);
 
   const onCancel = () => {
     setName(river.name);

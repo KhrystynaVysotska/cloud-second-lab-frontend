@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import TwoOptionsModal from "../../../common/presentation/components/modals/TwoOptionsModal";
-import { getDbLatestMeasurements } from "../../../measurements/api/measurementDbApi";
-import LatestMeasurementCardCarousel from "../../../measurements/presentation/components/LatestMeasurementCardCarousel";
 import RiversPageStyled from "../../../styles/rivers/pages/RiversPage.styled";
 import {
   getRivers,
@@ -12,12 +10,14 @@ import RiverCard from "../components/RiverCard";
 import RiverCardsStyled from "../../../styles/rivers/components/RiverCards.styled";
 import RiverAddCard from "../components/RiverAddCard";
 import RiverAddForm from "../components/forms/RiverAddForm";
+import { useHistory } from "react-router-dom";
+import { MEASUREMENT_POINT_PATH, RIVER_PATH } from "../../../constants/apiPath";
 
 function RiversPage() {
+  const history = useHistory();
   const dispatch = useDispatch();
   const { rivers } = useSelector((state) => state.rivers);
   const [showAddForm, setShowAddForm] = useState(false);
-  const [latestMeasurements, setLatestMeasurements] = useState([]);
   const [showModal, setShowModal] = useState({
     show: false,
     info: false,
@@ -33,9 +33,6 @@ function RiversPage() {
 
   useEffect(() => {
     dispatch(getRivers());
-    getDbLatestMeasurements()
-      .then(({ data }) => setLatestMeasurements(data))
-      .catch((err) => console.log(err));
   }, [dispatch]);
 
   const resetModal = () => {
@@ -95,16 +92,22 @@ function RiversPage() {
     });
   };
 
+  const pushRiverMeasurementPoints = (id) => {
+    history.push(RIVER_PATH + id + MEASUREMENT_POINT_PATH);
+  };
   return (
     <>
       <RiversPageStyled>
-        <LatestMeasurementCardCarousel measurements={latestMeasurements} />
         <p className="header">Оберіть річку</p>
         <RiverCardsStyled>
           {rivers.map((river, index) => {
             return (
               <React.Fragment key={index}>
-                <RiverCard river={river} onDelete={deleteRiver} />
+                <RiverCard
+                  river={river}
+                  onDelete={deleteRiver}
+                  onClick={pushRiverMeasurementPoints}
+                />
               </React.Fragment>
             );
           })}
