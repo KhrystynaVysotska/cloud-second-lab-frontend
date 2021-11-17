@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { makeStyles } from "@material-ui/core/styles";
 import { DataGrid } from "@mui/x-data-grid";
 import {
   deleteDbMeasurement,
@@ -8,6 +9,7 @@ import {
 import MeasurementPageStyled from "../../../styles/measurements/pages/MeasurementPage.styled";
 import MeasurementEditForm from "../components/MeasurementEditForm";
 import MeasurementAddForm from "../components/MeasurementAddForm";
+import ReloadIconStyled from "../../../styles/measurements/components/ReloadIcon.styled";
 
 export default function MeasurementPage() {
   let { id } = useParams();
@@ -15,12 +17,34 @@ export default function MeasurementPage() {
   const [selectedRows, setSelectedRows] = React.useState([]);
   const [showEditForm, setShowEditForm] = React.useState(false);
   const [showAddForm, setShowAddForm] = React.useState(false);
+  const [rotate, setRotate] = React.useState(0);
+
+  const getUpdatedMeasurements = (sensor_id) =>
+    getDbMeasurementsBySensorId(sensor_id)
+      .then(({ data }) => {
+        data = data.map((value) => {
+          return {
+            ...value,
+            timestamp: value["timestamp"].split("T").join(" "),
+          };
+        });
+        setMeasurements(data.reverse().slice(0, 100));
+      })
+      .catch((err) => console.log(err));
 
   useEffect(() => {
-    getDbMeasurementsBySensorId(id)
-      .then(({ data }) => setMeasurements(data))
-      .catch((err) => console.log(err));
+    getUpdatedMeasurements(id);
   }, [id]);
+
+  const useStyles = makeStyles({
+    root: {
+      "&.MuiDataGrid-root .MuiDataGrid-columnHeader:focus": {
+        outline: "none",
+      },
+    },
+  });
+
+  const classes = useStyles();
 
   const columns = [
     { field: "id", headerName: "ID", width: 170 },
@@ -36,6 +60,29 @@ export default function MeasurementPage() {
       width: 250,
       editable: true,
       type: "number",
+    },
+    {
+      width: 230,
+      field: "actions",
+      headerName: "",
+      headerAlign: "right",
+      editable: false,
+      sortable: false,
+      filterable: false,
+      disableExport: true,
+      disableColumnMenu: true,
+      disableClickEventBubbling: true,
+      renderHeader: () => (
+        <ReloadIconStyled
+          onAnimationEnd={() => setRotate(0)}
+          rotate={rotate}
+          onClick={(e) => {
+            e.stopPropagation();
+            setRotate(1);
+            getUpdatedMeasurements(id);
+          }}
+        />
+      ),
     },
   ];
 
@@ -78,7 +125,8 @@ export default function MeasurementPage() {
           <DataGrid
             rows={measurements}
             columns={columns}
-            rowsPerPageOptions={[5]}
+            pageSize={10}
+            className={classes.root}
             onSelectionModelChange={handleSelectionModelChange}
           />
           <div className="buttons">
