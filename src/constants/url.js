@@ -1,1 +1,1 @@
-export const BASE_DB_URL = "https://cloud-lab-3-332215.uc.r.appspot.com";
+export const BASE_DB_URL = "http://34.159.148.108:60000";
